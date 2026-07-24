@@ -36,3 +36,4 @@ typing-extensions==4.16.0
 tzdata==2026.3
 urllib3==2.6.3
 watchdog==6.0.0
+PyMuPDF==1.26.5
