@@ -1,5 +1,6 @@
 import streamlit as st
-import fitz
+from pdf_reader import leer_pdf
+
 
 st.title("AI PDF Teacher Assistant")
 
@@ -11,6 +12,7 @@ st.write(
 nombre = st.text_input("Escribe tu nombre")
 asignatura = st.text_input("Asignatura:")
 grado = st.text_input("Grado:")
+
 
 if nombre and asignatura and grado:
     st.success(
@@ -32,22 +34,14 @@ if nombre and asignatura and grado:
         st.write(archivo.name)
         st.write(archivo.type)
 
-        contenido_binario = archivo.getvalue()
+        resultado = leer_pdf(archivo)
 
-        try:
-            documento = fitz.open(
-                stream=contenido_binario,
-                filetype="pdf"
+        if resultado["error"]:
+            st.error(resultado["error"])
+        else:
+            st.write(
+                f"El documento tiene {resultado['paginas']} páginas."
             )
 
-            st.write(f"El documento tiene {documento.page_count} páginas.")
-
-            primera_pagina = documento.load_page(0)
-            texto = primera_pagina.get_text()
-
             st.subheader("Vista previa")
-            st.write(texto[:500])
-            documento.close()
-
-        except Exception as e:
-            st.error(f"Error al abrir el documento: {e}")
+            st.write(resultado["texto"])
